@@ -11,19 +11,19 @@ CREATE TABLE IF NOT EXISTS Cliente (
   primeiro_nome VARCHAR(45) NOT NULL,
   nome_meio CHAR(3) NOT NULL,
   ultimo_nome VARCHAR(45) NOT NULL,
-  cpf CHAR(11) NOT NULL,
-  tipo_conta VARCHAR(45) NOT NULL,
+  documento CHAR(15) NOT NULL,
+  tipo_conta VARCHAR(45) NOT NULL DEFAULT 'PF',
   data_nascimento DATE NOT NULL,
   rua VARCHAR(100) NOT NULL,
   bairro VARCHAR(45) NOT NULL,
   cidade VARCHAR(45) NOT NULL,
-  numero VARCHAR(45) NOT NULL,
+  numero VARCHAR(10) NOT NULL,
   complemento VARCHAR(45),
-  estado VARCHAR(45) NOT NULL,
-  pais VARCHAR(45) NOT NULL,
+  estado VARCHAR(2) NOT NULL,
+  pais VARCHAR(2) NOT NULL DEFAULT 'BR',
   PRIMARY KEY (idCliente),
   CONSTRAINT cliente_identificacao_unica 
-	UNIQUE (cpf));
+	UNIQUE (documento));
 
 -- Criando tabela de Produtos
 
@@ -61,12 +61,12 @@ CREATE TABLE IF NOT EXISTS Entrega (
 -- Criando tabela de Cartões
 
 CREATE TABLE IF NOT EXISTS Cartoes (
-  idPagamento INT NOT NULL AUTO_INCREMENT,
+  idCartao INT NOT NULL AUTO_INCREMENT,
   nro_cartao VARCHAR(45) NOT NULL,
   nome_cartao VARCHAR(45) NOT NULL,
   bandeira_cartao VARCHAR(45) NOT NULL,
   idCliente INT NOT NULL,
-  PRIMARY KEY (idPagamento, idCliente),
+  PRIMARY KEY (idCartao, idCliente),
   CONSTRAINT fk_pagamento_cliente
     FOREIGN KEY (idCliente)
     REFERENCES Cliente (idCliente));
@@ -92,15 +92,19 @@ CREATE TABLE IF NOT EXISTS Pedido (
 
 CREATE TABLE IF NOT EXISTS Pagamento (
   idPagamento INT NOT NULL AUTO_INCREMENT,
-  Cliente_idCliente INT NOT NULL,
+  idCliente INT NOT NULL,
   tipo ENUM('boleto', 'cartao_credito', 'pix') NOT NULL DEFAULT 'boleto',
   data_pagamento DATE NOT NULL,
-  id_cartao_pagamento INT(11) NULL,
+  id_cartao INT(11) NULL,
   codigo_pix VARCHAR(255) NULL,
-  PRIMARY KEY (idPagamento, Cliente_idCliente),
+  link_boleto VARCHAR(255) NULL,
+  PRIMARY KEY (idPagamento, idCliente),
   CONSTRAINT fk_pagamento_cliente_pagamentos
-    FOREIGN KEY (Cliente_idCliente)
-    REFERENCES Cliente (idCliente));
+    FOREIGN KEY (idCliente)
+    REFERENCES Cliente (idCliente),
+    CONSTRAINT fk_pagamento_cartao
+    FOREIGN KEY (id_cartao)
+    REFERENCES Cartoes (idCartao));
 
 -- Criando tabela de fornecedor
 

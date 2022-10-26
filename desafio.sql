@@ -44,7 +44,8 @@ CREATE TABLE IF NOT EXISTS Produto(
 -- Criando tabela estoque
 CREATE TABLE IF NOT EXISTS Estoque (
   idEstoque INT NOT NULL AUTO_INCREMENT,
-  local VARCHAR(45) NOT NULL,
+  locacao VARCHAR(45) NULL,
+  endereco VARCHAR(255)  NOT NULL,
   PRIMARY KEY (idEstoque));
 
 -- Criando tabela de entregas
@@ -138,7 +139,6 @@ CREATE TABLE IF NOT EXISTS Estoque_do_produto (
   Produto_idProduto INT NOT NULL AUTO_INCREMENT,
   Estoque_idEstoque INT NOT NULL,
   quantidade INT NOT NULL DEFAULT 0,
-  locacao VARCHAR(255) NOT NULL,
   PRIMARY KEY (Produto_idProduto, Estoque_idEstoque),
   CONSTRAINT fk_produto_estoque
     FOREIGN KEY (Produto_idProduto)
@@ -172,7 +172,7 @@ CREATE TABLE IF NOT EXISTS Terceiro (
   endereco VARCHAR(45) NOT NULL,
   nome_fantasia VARCHAR(45) NOT NULL,
   cnpj VARCHAR(15) NULL,
-  cpf VARCHAR(9) NULL,
+  cpf VARCHAR(11) NULL,
   PRIMARY KEY (idTerceiro),
   CONSTRAINT razao_social_unique UNIQUE (razao_social));
 

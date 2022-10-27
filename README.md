@@ -24,5 +24,3 @@ Algumas perguntas que foram propostas:
 * Algum vendedor também é fornecedor?
 * Relação de produtos fornecedores e estoques;
 * Relação de nomes dos fornecedores e nomes dos produtos;
-
-** EM ANDAMENTO **

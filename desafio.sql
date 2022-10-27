@@ -48,16 +48,34 @@ CREATE TABLE IF NOT EXISTS Estoque (
   endereco VARCHAR(255)  NOT NULL,
   PRIMARY KEY (idEstoque));
 
+-- Criando tabelas de pedidos
+
+CREATE TABLE IF NOT EXISTS Pedido (
+  idPedido INT(11) NOT NULL AUTO_INCREMENT,
+  status ENUM('Em andamento', 'Processando', 'Enviado', 'Entregue', 'Cancelado') NOT NULL DEFAULT 'Processando',
+  descricao VARCHAR(255) NULL,
+  Cliente_idCliente INT NOT NULL,
+  Frete FLOAT NOT NULL DEFAULT 10,
+  valor_total FLOAT NOT NULL,
+  PRIMARY KEY (idPedido, Cliente_idCliente),
+  CONSTRAINT fk_pedido_cliente
+    FOREIGN KEY (Cliente_idCliente)
+    REFERENCES Cliente (idCliente));
+    
 -- Criando tabela de entregas
 
 CREATE TABLE IF NOT EXISTS Entrega (
   idEntrega INT NOT NULL AUTO_INCREMENT,
   status VARCHAR(45) NOT NULL,
   cod_rastreio VARCHAR(45) NOT NULL,
-  data_saida DATE NOT NULL,
-  data_entrega DATE NOT NULL,
+  data_saida DATE NULL,
+  data_entrega DATE NULL,
   transportadora VARCHAR(45) NOT NULL,
-  PRIMARY KEY (idEntrega));
+  idPedido INT(11) NOT NULL,
+  PRIMARY KEY (idEntrega),
+  CONSTRAINT fk_idpedido_entrega2
+	FOREIGN KEY (idPedido)
+    REFERENCES Pedido (idPedido));
 
 -- Criando tabela de Cartões
 
@@ -72,23 +90,6 @@ CREATE TABLE IF NOT EXISTS Cartoes (
     FOREIGN KEY (idCliente)
     REFERENCES Cliente (idCliente));
 
--- Criando tabelas de pedidos
-
-CREATE TABLE IF NOT EXISTS Pedido (
-  idPedido INT NOT NULL AUTO_INCREMENT,
-  status ENUM('Em andamento', 'Processando', 'Enviado', 'Entregue', 'Cancelado') NOT NULL DEFAULT 'Processando',
-  descricao VARCHAR(255) NULL,
-  Cliente_idCliente INT NOT NULL,
-  Frete FLOAT NOT NULL DEFAULT 10,
-  Entrega_idEntrega INT NOT NULL,
-  PRIMARY KEY (idPedido, Cliente_idCliente,Entrega_idEntrega),
-  CONSTRAINT fk_pedido_cliente
-    FOREIGN KEY (Cliente_idCliente)
-    REFERENCES Cliente (idCliente),
-  CONSTRAINT fk_pedido_entrega
-    FOREIGN KEY (Entrega_idEntrega)
-    REFERENCES Entrega (idEntrega));
-
 -- Criando tabela de Pagamentos
 
 CREATE TABLE IF NOT EXISTS Pagamento (
@@ -99,13 +100,17 @@ CREATE TABLE IF NOT EXISTS Pagamento (
   id_cartao INT(11) NULL,
   codigo_pix VARCHAR(255) NULL,
   link_boleto VARCHAR(255) NULL,
+  idPedido INT(11) NOT NULL,
   PRIMARY KEY (idPagamento, idCliente),
   CONSTRAINT fk_pagamento_cliente_pagamentos
     FOREIGN KEY (idCliente)
     REFERENCES Cliente (idCliente),
     CONSTRAINT fk_pagamento_cartao
     FOREIGN KEY (id_cartao)
-    REFERENCES Cartoes (idCartao));
+    REFERENCES Cartoes (idCartao),
+    CONSTRAINT fk_pagamento_pedido
+	FOREIGN KEY (idPedido)
+    REFERENCES Pedido (idPedido));
 
 -- Criando tabela de fornecedor
 
